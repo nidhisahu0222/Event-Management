@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dynamic Event Management System</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            padding-top: 56px;
+            font-family: 'Roboto', sans-serif;
+            color: #333;
+         
+        }
+        .navbar {
+            background: linear-gradient(135deg, #3a0a6a, #d72f77);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            transition:transform 0.3s;
+        }
+        .navbar.scrolled {
+            background: rgba(0, 0, 0, 0.8);
+        }
+        .navbar-brand {
+            font-weight: bold;
+            color: #ffffff !important;
+        }
+        .navbar-nav .nav-link {
+            color: #ffffff !important;
+        }
+        .navbar-nav .nav-link:hover {
+            color: #f8c0c8 !important;
+        }
+        .navbar-toggler-icon {
+            background-image: url('data:image/svg+xml;charset=utf8,%3Csvg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 30 30"%3E%3Cpath stroke="%23fff" stroke-width="2" d="M5 7h20M5 15h20M5 23h20"/%3E%3C/svg%3E');
+        }
+        .section {
+            display: none;
+        }
+        .active {
+            display: block;
+        }
+        .event-card {
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 1px solid #d72f77;
+            border-radius: 0.5rem;
+            background: #ffffff;
+            color: #333;
+        }
+        .event-card:hover {
+            background-color: #d72f77;
+            color: #ffffff;
+            transform: scale(1.02);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        .card-body {
+            padding: 1.5rem;
+        }
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #6a0b7a;
+        }
+        .btn-primary {
+            background-color: #d72f77;
+            border: none;
+        }
+        .btn-primary:hover {
+            background-color: #f8c0c8;
+        }
+        .btn-secondary {
+            background-color: #6c757d;
+            border: none;
+        }
+        .btn-secondary:hover {
+            background-color: #5a6268;
+        }
+        .form-control {
+            border-radius: 0.5rem;
+            border: 1px solid #d72f77;
+            background: #ffffff;
+            color: #333;
+        }
+        .form-control:focus {
+            border-color: #f8c0c8;
+            box-shadow: 0 0 0 0.2rem rgba(248, 192, 200, 0.25);
+        }
+        .list-group-item {
+            background: #ffffff;
+            border: 1px solid #d72f77;
+            border-radius: 0.5rem;
+            margin-bottom: 0.5rem;
+            color: #333;
+        }
+        .list-group-item:hover {
+            background: #d72f77;
+            color: #ffffff;
+        }
+        .card {
+            border-radius: 0.5rem;
+            overflow: hidden;
+            background: #ffffff;
+            color: #333;
+        }
+        .section-title {
+            color: #d72f77;
+            font-weight: 600;
+            padding-bottom: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        .small-section {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        @media (max-width: 767px) {
+            .navbar-nav .nav-link {
+                margin-left: 0;
+                margin-right: 0;
+            }
+            .btn {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+            .small-section {
+                width: 90%;
+            }
+        }
+        @media (max-width: 576px) {
+            .card-title {
+                font-size: 1.25rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top">
+        <a class="navbar-brand" href="#" onclick="showSection('home')">Event Management System</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="#" onclick="showSection('register')">Register</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" onclick="showSection('login')">Login</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" onclick="showSection('user-dashboard')">Dashboard</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" onclick="showSection('admin-panel')">Admin Panel</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <!-- Home Section (Event Listing) -->
+        <div id="home" class="section active">
+            <h2 class="section-title text-center mb-4">Upcoming Events</h2>
+            <div class="row" id="event-list">
+                <!-- Event items will be dynamically inserted here -->
+            </div>
+        </div>
+
+        <!-- Register Section -->
+        <div id="register" class="section small-section">
+            <h2 class="section-title text-center mb-4">Register</h2>
+            <form>
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" class="form-control" id="username" placeholder="Enter username" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email address</label>
+                    <input type="email" class="form-control" id="email" placeholder="Enter email" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" class="form-control" id="password" placeholder="Password" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Register</button>
+             
+            </form>
+        </div>
+
+        <!-- Login Section -->
+        <div id="login" class="section small-section">
+            <h2 class="section-title text-center mb-4">Login</h2>
+            <form>
+                <div class="form-group">
+                    <label for="login-email">Email address</label>
+                    <input type="email" class="form-control" id="login-email" placeholder="Enter email" required>
+                </div>
+                <div class="form-group">
+                    <label for="login-password">Password</label>
+                    <input type="password" class="form-control" id="login-password" placeholder="Password" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Login</button>
+
+            </form>
+        </div>
+
+        <!-- Event Details Section -->
+        <div id="event-details" class="section">
+            <h2 class="section-title text-center mb-4">Event Details</h2>
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title" id="event-title"></h5>
+                    <p class="card-text" id="event-date"></p>
+                    <p class="card-text" id="event-location"></p>
+                    <p class="card-text" id="event-description"></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- User Dashboard Section -->
+        <div id="user-dashboard" class="section small-section">
+            <h2 class="section-title text-center mb-4">User Dashboard</h2>
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">My Events</h5>
+                    <div class="list-group" id="user-events">
+                        <!-- User events will be dynamically inserted here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Admin Panel Section -->
+        <div id="admin-panel" class="section small-section">
+            <h2 class="section-title text-center mb-4">Admin Panel</h2>
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Manage Events</h5>
+                    <div class="list-group" id="admin-events">
+                        <!-- Admin events will be dynamically inserted here -->
+                    </div>
+                    <button class="btn btn-primary mt-3" onclick="showSection('create-event')">Create Event</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Create Event Section -->
+        <div id="create-event" class="section small-section">
+            <h2 class="section-title text-center mb-4">Create Event</h2>
+            <form>
+                <div class="form-group">
+                    <label for="event-title-input">Event Title</label>
+                    <input type="text" class="form-control" id="event-title-input" placeholder="Enter event title" required>
+                </div>
+                <div class="form-group">
+                    <label for="event-date-input">Date</label>
+                    <input type="date" class="form-control" id="event-date-input" required>
+                </div>
+                <div class="form-group">
+                    <label for="event-time-input">Time</label>
+                    <input type="time" class="form-control" id="event-time-input" required>
+                </div>
+                <div class="form-group">
+                    <label for="event-location-input">Location</label>
+                    <input type="text" class="form-control" id="event-location-input" placeholder="Enter event location" required>
+                </div>
+                <div class="form-group">
+                    <label for="event-description-input">Description</label>
+                    <textarea class="form-control" id="event-description-input" rows="3" placeholder="Enter event description" required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Add Event</button>
+
+            </form>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        // Sample data for demonstration
+        const events = [
+            { title: "Event Title 1", date: "2024-08-01", time: "18:00", location: "Location 1", description: "This is a detailed description of Event Title 1." },
+            { title: "Event Title 2", date: "2024-08-05", time: "15:00", location: "Location 2", description: "This is a detailed description of Event Title 2." },
+            { title: "Event Title 3", date: "2024-08-10", time: "10:00", location: "Location 3", description: "This is a detailed description of Event Title 3." },
+            { title: "Event Title 4", date: "2024-08-15", time: "14:00", location: "Location 4", description: "This is a detailed description of Event Title 4." },
+            { title: "Event Title 5", date: "2024-08-20", time: "16:00", location: "Location 5", description: "This is a detailed description of Event Title 5." },
+            { title: "Event Title 6", date: "2024-08-25", time: "11:00", location: "Location 6", description: "This is a detailed description of Event Title 6." },
+            { title: "Event Title 7", date: "2024-08-30", time: "17:00", location: "Location 7", description: "This is a detailed description of Event Title 7." },
+            { title: "Event Title 8", date: "2024-09-05", time: "13:00", location: "Location 8", description: "This is a detailed description of Event Title 8." },
+            { title: "Event Title 9", date: "2024-09-10", time: "09:00", location: "Location 9", description: "This is a detailed description of Event Title 9." },
+            { title: "Event Title 10", date: "2024-09-15", time: "19:00", location: "Location 10", description: "This is a detailed description of Event Title 10." },
+        ];
+
+        function showSection(sectionId) {
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.getElementById(sectionId).classList.add('active');
+        }
+
+        function loadEventDetails(eventIndex) {
+            const event = events[eventIndex];
+            document.getElementById('event-title').innerText = event.title;
+            document.getElementById('event-date').innerText = `Date: ${event.date}`;
+            document.getElementById('event-location').innerText = `Location: ${event.location}`;
+            document.getElementById('event-description').innerText = event.description;
+            showSection('event-details');
+        }
+
+        function loadEvents() {
+            const eventList = document.getElementById('event-list');
+            eventList.innerHTML = '';
+            events.forEach((event, index) => {
+                const eventCard = document.createElement('div');
+                eventCard.className = 'col-md-4 mb-3';
+                eventCard.innerHTML = `
+                    <div class="card event-card">
+                        <div class="card-body">
+                            <h5 class="card-title">${event.title}</h5>
+                            <p class="card-text">${event.date} at ${event.time}</p>
+                            <p class="card-text">${event.location}</p>
+                        </div>
+                    </div>
+                `;
+                eventCard.onclick = () => loadEventDetails(index);
+                eventList.appendChild(eventCard);
+            });
+        }
+
+        function loadUserEvents() {
+            const userEvents = document.getElementById('user-events');
+            userEvents.innerHTML = '';
+            events.forEach((event, index) => {
+                const userEventItem = document.createElement('a');
+                userEventItem.className = 'list-group-item list-group-item-action';
+                userEventItem.innerHTML = `<h5 class="mb-1">${event.title}</h5><p class="mb-1">${event.date} at ${event.time}</p><small>${event.location}</small>`;
+                userEvents.appendChild(userEventItem);
+            });
+        }
+
+        function loadAdminEvents() {
+            const adminEvents = document.getElementById('admin-events');
+            adminEvents.innerHTML = '';
+            events.forEach((event, index) => {
+                const adminEventItem = document.createElement('a');
+                adminEventItem.className = 'list-group-item list-group-item-action';
+                adminEventItem.innerHTML = `<h5 class="mb-1">${event.title}</h5><p class="mb-1">${event.date} at ${event.time}</p><small>${event.location}</small>`;
+                adminEvents.appendChild(adminEventItem);
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadEvents();
+            loadUserEvents();
+            loadAdminEvents();
+
+            // Navbar scroll effect
+            window.addEventListener('scroll', () => {
+                const navbar = document.querySelector('.navbar');
+                if (window.scrollY > 50) {
+                    navbar.classList.add('scrolled');
+                } else {
+                    navbar.classList.remove('scrolled');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
